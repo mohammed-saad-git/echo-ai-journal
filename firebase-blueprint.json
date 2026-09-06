@@ -1,0 +1,63 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile information",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Unique user ID" },
+        "email": { "type": "string", "description": "User email address" },
+        "displayName": { "type": "string", "description": "User display name" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Account creation timestamp" }
+      },
+      "required": ["uid"]
+    },
+    "JournalEntry": {
+      "title": "JournalEntry",
+      "description": "User journal entry with AI reflection and extracted patterns",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Owner user ID" },
+        "content": { "type": "string", "description": "Original journal writing content" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Entry creation timestamp" },
+        "summary": { "type": "string", "description": "AI distilled summary" },
+        "emotions": { "type": "array", "description": "Extracted emotions with intensity ratings" },
+        "themes": { "type": "array", "description": "Key themes detected in the entry" },
+        "observations": { "type": "array", "description": "Observations about mindsets or assumptions" },
+        "possiblePatterns": { "type": "array", "description": "Recurring behavioral or cognitive patterns" },
+        "reflectionQuestion": { "type": "string", "description": "AI reflection question for the user" },
+        "encouragement": { "type": "string", "description": "Grounded reassurance note" }
+      },
+      "required": ["uid", "content", "createdAt"]
+    },
+    "Conversation": {
+      "title": "Conversation",
+      "description": "Multi-turn inquiry session between user and Echo",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Owner user ID" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Conversation start time" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Last message timestamp" }
+      },
+      "required": ["uid", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile document isolated to the owner"
+    },
+    "/entries/{entryId}": {
+      "schema": "JournalEntry",
+      "description": "Private journal entries isolated to the authenticated author"
+    },
+    "/demo_entries/{entryId}": {
+      "schema": "JournalEntry",
+      "description": "Dedicated immutable demo journal entries for judges and reviewers"
+    },
+    "/conversations/{conversationId}": {
+      "schema": "Conversation",
+      "description": "Conversations between user and Echo"
+    }
+  }
+}

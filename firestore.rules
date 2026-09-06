@@ -1,0 +1,41 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Connection test rule
+    match /test/{testId} {
+      allow read: if true;
+    }
+
+    // User profiles - strictly isolated to owner
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Normal journal entries - strictly isolated by authenticated uid
+    match /entries/{entryId} {
+      allow read, delete: if request.auth != null && resource.data.uid == request.auth.uid;
+      allow create: if request.auth != null && request.resource.data.uid == request.auth.uid;
+      allow update: if request.auth != null && resource.data.uid == request.auth.uid && request.resource.data.uid == request.auth.uid;
+    }
+    
+    // Demo entries - dedicated collection read-only for demo users, inaccessible to normal users
+    match /demo_entries/{entryId} {
+      allow read: if request.auth != null && request.auth.uid == 'echo-demo-judge-uid-apac2026';
+      allow write: if false; // Shared demo dataset is immutable to protect multi-judge review
+    }
+
+    // Conversations - strictly isolated by authenticated uid
+    match /conversations/{conversationId} {
+      allow read, delete: if request.auth != null && resource.data.uid == request.auth.uid;
+      allow create: if request.auth != null && request.resource.data.uid == request.auth.uid;
+      allow update: if request.auth != null && resource.data.uid == request.auth.uid && request.resource.data.uid == request.auth.uid;
+      
+      match /messages/{messageId} {
+        allow read, write: if request.auth != null && 
+          get(/databases/$(database)/documents/conversations/$(conversationId)).data.uid == request.auth.uid;
+      }
+    }
+  }
+}
+

@@ -1,0 +1,7 @@
+{
+  "name": "Echo — Private AI Journal",
+  "description": "A private AI journal that helps you understand patterns in your thoughts, decisions, emotions, and behavior over time.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
